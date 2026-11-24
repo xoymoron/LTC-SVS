@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#e1e2d6">
+<meta name="description" content="Compare local breathiness, vibrato and falsetto commands in synthesized singing. Audio examples from Minjun Kim’s LTC-SVS project at Yonsei University.">
+<title>LTC-SVS — Local technique control in singing voice synthesis</title>
+<link rel="stylesheet" href="./style.css"><script defer src="./player.js"></script>
+</head>
+<body>
+<header><a class="wordmark" href="./">LTC–SVS</a><nav aria-label="Page"><a href="#listen">Listen</a><a href="#method">Method</a><a href="https://github.com/xoymoron/LTC-SVS">GitHub ↗</a></nav></header>
+<main>
+<section class="intro" aria-labelledby="title"><p class="byline">Minjun Kim <span> / </span> Yonsei University</p>
+<h1 id="title">Local technique control<br><em>in singing voice synthesis.</em></h1>
+<p class="lead">Change the vocal technique on a word or phrase. Listen to the same score and singer reference with and without a local command.</p></section>
+<section id="listen" aria-label="Listening examples">
+<div class="selector"><h2>Listening examples</h2>
+<fieldset id="phrases"><legend class="sr">Choose a listening example</legend>
+<label><input type="radio" name="phrase" value="0" checked><span><strong>Dream It Possible</strong><small>English · Add breathiness</small></span></label>
+<label><input type="radio" name="phrase" value="1"><span><strong lang="zh">枫 <i>Fēng</i></strong><small>Mandarin · Add vibrato</small></span></label>
+<label><input type="radio" name="phrase" value="2"><span><strong>Try</strong><small>English · Remove falsetto</small></span></label>
+</fieldset></div>
+<div class="audition">
+<p class="target" id="command">Breathiness ON</p><h3 id="lyric">“dark turning dust”</h3>
+<fieldset id="conditions"><legend>Compare syntheses</legend>
+<label><input type="radio" name="version" value="soulx"><span>Original SoulX</span></label>
+<label><input type="radio" name="version" value="preflow_unspecified" checked><span>No label</span></label>
+<label><input type="radio" name="version" value="preflow_cfg4"><span>Guidance ×4</span></label>
+<label><input type="radio" name="version" value="preflow_cfg8"><span>Guidance ×8</span></label>
+</fieldset>
+<div class="transport"><button type="button" id="play">▶ Play</button><label class="seek"><span class="sr">Playback position</span><input type="range" id="seek" min="0" max="2.12" step="0.01" value="0"></label><output id="timer">0.00 / 2.12 s</output><label class="loop"><input type="checkbox" id="loop" checked> Loop</label></div>
+<p class="hint" id="hint" role="status">Switch versions while the excerpt loops to compare the same moment.</p>
+<audio id="audio" preload="auto" loop src="./audio/dream_it_possible_breathiness/preflow_unspecified.wav"></audio>
+<noscript><p>JavaScript is needed for synchronized switching. <a href="./audio/dream_it_possible_breathiness/preflow_unspecified.wav">Listen to the no-label excerpt</a> or <a href="https://github.com/xoymoron/LTC-SVS/tree/main/audio">browse all WAV files</a>.</p></noscript>
+</div></section>
+<section id="method"><div><h2>What changes across versions?</h2><p><b>Original SoulX</b> uses the pretrained SoulX-Singer. <b>No label</b> uses the adapted model with no technique request. <b>Guidance ×4 and ×8</b> apply the selected ON or OFF command to the target words. Score, singer reference and noise seed are matched within each example.</p></div>
+<div><h2>About the experiment</h2><p>We trained technique embeddings and the score encoder on 5,415 English and Chinese GTSinger clips while keeping the flow decoder frozen. The evaluation covered 3,310 target regions from two held-out singers. These three excerpts are the listening examples used in the capstone presentation.</p></div></section>
+</main>
+<footer><b>Minjun Kim · Yonsei University</b><p>Synthesized demonstrations based on <a href="https://github.com/AaronZ345/GTSinger">GTSinger</a> (Zhang et al., 2024), generated with <a href="https://github.com/Soul-AILab/SoulX-Singer">SoulX-Singer</a> and its locally conditioned adaptation. Audio excerpts are shared under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>.</p></footer>
+</body></html>
