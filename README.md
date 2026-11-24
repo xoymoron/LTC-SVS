@@ -1,16 +1,16 @@
 # LTC-SVS
 
-[Listen to the audio demo](https://xoymoron.github.io/LTC-SVS/)
+[Open the listening page](https://xoymoron.github.io/LTC-SVS/) · [Download the poster QR code](./LTC-SVS-QR.png)
 
-Minjun Kim, Yonsei University. This page accompanies *Adding Local Technique Control to a Pretrained Singing Voice Synthesis Model*. It compares the original SoulX-Singer, the adapted score encoder with no label, and local technique guidance at ×4 and ×8. Select a phrase, press Play and switch versions during playback.
+Minjun Kim · Yonsei University
 
-| Excerpt | Target | Request |
-| --- | --- | --- |
-| Dream It Possible | dark turning dust | Add breathiness |
-| 枫 (Fēng) | 爱 | Add vibrato |
-| Try | you | Remove falsetto |
+This is the original Korean listening interface for *Adding Local Technique Control to a Pretrained Singing Voice Synthesis Model*. Select an add or remove request, a technique, a phrase, and a model. Compare the actual singing, the original SoulX-Singer output and the selected model. The interface includes synchronized mel views, target-region playback, per-phrase measurements, a singer reference and a randomized A/B comparison.
 
-The 12 WAV files are synthesized excerpts from the capstone listening panel. They use scores and singer conditioning from [GTSinger](https://github.com/AaronZ345/GTSinger) and [SoulX-Singer](https://github.com/Soul-AILab/SoulX-Singer). The audio excerpts are shared under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). See the [GTSinger dataset license](https://huggingface.co/datasets/GTSinger/GTSinger/blob/main/dataset_license.md).
+The listening panel contains 36 addition and 36 removal regions, plus one extra vibrato-removal example excluded from the evaluation statistics. Each region includes four guidance settings for each of the five model choices. The displayed technique probe is the original study probe. The separate STARS evaluation uses a different panel and scoring protocol.
 
+## Audio and attribution
 
-[Download the poster QR code](./LTC-SVS-QR.png)
+Real singing and reference audio are from [GTSinger](https://github.com/AaronZ345/GTSinger) by Yu Zhang et al., *GTSinger: A Global Multi-Technique Singing Corpus with Realistic Music Scores for All Singing Tasks*, NeurIPS 2024. The listening copies include excerpting and matched playback gain. Syntheses were generated with [SoulX-Singer](https://github.com/Soul-AILab/SoulX-Singer) and its locally conditioned adaptations. GTSinger audio and adaptations are shared under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). See the [dataset license](https://huggingface.co/datasets/GTSinger/GTSinger/blob/main/dataset_license.md).
+
+The page loads only the selected media. Identical WAVs share a file, and all audio and mel assets are byte-identical to their counterparts in the local listening panel.
+
