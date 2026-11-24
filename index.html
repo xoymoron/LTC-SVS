@@ -1,8 +1,8 @@
 <!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SoulX 창법 청취 비교</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LTC-SVS — Adding Local Technique Control to a Pretrained Singing Voice Synthesis Model</title>
 <style>
-:root{font-family:"Inter","Malgun Gothic",system-ui,sans-serif;color:#252621;background:#f6f5f0;--line:#d2d1c7;--green:#22574b;--muted:#595e54}
+:root{font-family:"Inter",system-ui,sans-serif;color:#252621;background:#f6f5f0;--line:#d2d1c7;--green:#22574b;--muted:#595e54}
 *{box-sizing:border-box}body{margin:0}main{max-width:1300px;margin:auto;padding:26px clamp(14px,3.5vw,54px) 50px}
 h1{font-size:clamp(26px,3vw,43px);letter-spacing:-.065em;margin:0 0 19px}h2{font-size:21px;letter-spacing:-.04em;margin:0}
 button,select{font:inherit;color:inherit}button{cursor:pointer;border:1px solid var(--line);background:#fffefa;padding:6px 12px;border-radius:5px;font-size:14px}
@@ -21,34 +21,80 @@ th,td{padding:7px 9px;text-align:right;border-bottom:1px solid var(--line);white
 thead th{font-size:12px;color:var(--muted)}td.model{font-weight:700;color:var(--green)}.asr{margin-top:10px;display:grid;grid-template-columns:max-content 1fr;gap:5px 12px;font-size:14px}.asr dt{color:var(--muted)}.asr dd{margin:0;overflow-wrap:anywhere}
 details{padding:9px 0}summary{cursor:pointer}.blind{border-top:1px solid var(--line);padding-top:12px}.blind button{margin:3px 3px 3px 0}
 @media(max-width:900px){.choices{grid-template-columns:1fr 1fr}.graphs{gap:5px}.panel{padding:5px}.panel-head{min-height:55px}}@media(max-width:600px){main{padding-top:16px}.graphs{grid-template-columns:1fr}.panel-head{min-height:30px}.panel{padding:7px}canvas{height:165px}.choices{gap:7px}.key{margin-left:0}.player-row audio{width:100%}}
-</style></head><body><main>
-<h1>SoulX 창법 청취 비교</h1>
+
+.study { margin: 10px 0 28px; }
+.project-name { margin: 0 0 11px; font-size: 15px; font-weight: 750; color: var(--green); }
+.study h1 { max-width: 35ch; font-size: clamp(29px, 3.1vw, 45px); line-height: 1.07; letter-spacing: -.045em; margin: 0; }
+.author { margin: 13px 0 0; color: var(--muted); font-size: 15px; }
+.abstract { max-width: 88ch; margin-bottom: 32px; }
+.abstract p { margin: 9px 0 0; line-height: 1.58; font-size: 16px; }
+.listen-title { margin-bottom: 12px; }
+.section-head h3 { margin: 0; font-size: 20px; letter-spacing: -.035em; }
+#caseTitle { margin-bottom: 7px; }
+.blind { margin-top: 14px; }
+
+</style>
+</head>
+<body>
+<main>
+<header class="study">
+  <p class="project-name">LTC-SVS</p>
+  <h1>Adding Local Technique Control to a Pretrained Singing Voice Synthesis Model</h1>
+  <p class="author">Minjun Kim · Yonsei University</p>
+</header>
+<section class="abstract" aria-labelledby="abstract-title">
+  <h2 id="abstract-title">Abstract</h2>
+  <p>Can a singing voice model add vibrato, falsetto, or breathiness to a few words while preserving the rest of a performance? We adapt SoulX-Singer to accept a technique label on each word. We train the label embeddings and score encoder on 5,415 English and Mandarin clips from GTSinger while keeping the flow decoder frozen. During synthesis, a guidance scale controls how strongly the model follows an ON or OFF request. We evaluated edits in 3,310 target regions from two held-out singers. At the strongest guidance, vibrato ON increased pitch modulation on average. Breathiness ON and OFF both lowered the harmonics-to-noise ratio, showing that the two commands did not produce opposite acoustic changes.</p>
+</section>
+<!-- Architecture figure goes between the abstract and the listening examples. -->
+<section aria-labelledby="listen-title">
+<h2 id="listen-title" class="listen-title">Listening examples</h2>
 <div class="choices">
-<label>실험<select id="mode"><option value="remove">실제 ON → OFF 제거</option><option value="add">실제 OFF → ON 추가</option></select></label>
-<label>창법<select id="tech"><option value="vibrato">Vibrato</option><option value="falsetto">Falsetto</option><option value="breathiness">Breathiness</option></select></label>
-<label>구절<select id="case"></select></label>
-<label>모델<select id="arm"><option value="fm">① Embedding FM</option><option value="contrast">② Embedding + contrast</option><option value="global">③ 전체 preflow</option><option value="local">③ 국소 preflow</option><option value="lora">기존 LoRA T</option></select></label></div>
-<div class="bar"><div class="tools"><strong>창법 지시</strong><div id="gains" role="group" aria-label="창법 지시와 CFG"></div></div>
-<label class="tools"><input type="checkbox" id="crop" checked>목표 구간 확대·재생 (앞뒤 0.35초)</label></div>
-<div class="section-head"><h2 id="caseTitle"></h2><span id="timing" class="note"></span></div><p id="basis" class="note"></p>
+  <label>Edit<select id="mode"><option value="remove">Remove technique (ON → OFF)</option><option value="add">Add technique (OFF → ON)</option></select></label>
+  <label>Technique<select id="tech"><option value="vibrato">Vibrato</option><option value="falsetto">Falsetto</option><option value="breathiness">Breathiness</option></select></label>
+  <label>Phrase<select id="case"></select></label>
+  <label>Model<select id="arm"><option value="fm">Embedding only</option><option value="contrast">Embedding + contrast</option><option value="global">Full score encoder + contrast</option><option value="local">Local score encoder + contrast</option><option value="lora">Decoder LoRA</option></select></label>
+</div>
+<div class="bar">
+  <div class="tools"><strong>Guidance</strong><div id="gains" role="group" aria-label="Technique command and guidance strength"></div></div>
+  <label class="tools"><input type="checkbox" id="crop" checked> Focus on the target (0.35 s on each side)</label>
+</div>
+<div class="section-head"><h3 id="caseTitle"></h3><span id="timing" class="note"></span></div>
 <div class="graphs">
-<figure class="panel"><figcaption class="panel-head"><strong>실제 가창</strong><button data-audio="real">▶ 듣기</button></figcaption><canvas id="realPlot" aria-label="실제 가창 mel spectrogram"></canvas></figure>
-<figure class="panel"><figcaption class="panel-head"><strong>원본 SoulX</strong><button data-audio="native">▶ 듣기</button></figcaption><canvas id="nativePlot" aria-label="원본 SoulX mel spectrogram"></canvas></figure>
-<figure class="panel"><figcaption class="panel-head"><strong id="modelTitle">선택 모델</strong><button data-audio="model">▶ 듣기</button></figcaption><canvas id="modelPlot" aria-label="선택한 모델과 강도의 mel spectrogram"></canvas></figure></div>
-<div class="legend">Mel power <span>−80</span><span class="scale"></span><span>0 dB</span><span class="key">┆ 목표 구간 경계</span><span>· 같은 구절의 모든 그림에 같은 색 눈금 적용</span></div>
-<div class="player-row"><audio id="player" controls preload="metadata"></audio><span id="active" aria-live="polite"></span><button data-audio="ref">가수 reference 듣기</button></div>
-<section class="metrics"><div class="section-head"><h2>구절별 평가</h2><span class="note">Δ = 선택 조건 − 같은 모델의 무지정</span></div>
-<div class="scroll"><table><thead><tr><th>지표</th><th>실제 가창</th><th>원본 SoulX</th><th id="metricTitle">선택 모델</th><th>Δ</th></tr></thead><tbody id="measurements"></tbody></table></div>
-<dl class="asr"><dt>정답 가사¹</dt><dd id="lyrics"></dd><dt>Whisper 전사</dt><dd id="transcript"></dd></dl>
-<details><summary>측정 범위와 그림 읽는 법</summary><p>창법 probe는 지시 구간의 음향 점수야. 단일음 떨림은 같은 모델의 CFG를 비교할 수 있는 시간창에서 측정했고, ON 추가 실험은 모델별 유효 시간창이 다를 수 있어. WavLM은 전체 구절과 같은 가수의 다른 곡 reference 간 cosine이야. 영어는 WER·CER, 중국어는 CER를 표시해. 오류율 Δ는 퍼센트포인트야. ¹평가에 쓴 정규화 가사이며, —는 저장된 측정값이 없거나 유효한 측정이 어려웠다는 뜻이야.</p><p>기존 24 kHz WAV에서 80개 mel 대역, Hann 1,024 samples, hop 10 ms로 그렸어. 색은 구절 내 전체 조건의 최대 mel power에 대한 상대 dB야. 가로축은 구절 시작부터의 초, 세로축은 mel 간격의 주파수야. 확대해도 색 눈금은 유지돼.</p></details></section>
-<div class="blind"><strong>가려 듣기</strong> <span id="blindPair" class="note"></span><br><button id="shuffle">순서 섞기</button><button id="aa">A 듣기</button><button id="bb">B 듣기</button><button id="reveal">조건 보기</button> <span id="answer"></span></div>
-</main><script src="mel/samples.js"></script><script>
+  <figure class="panel"><figcaption class="panel-head"><strong>Recorded singing</strong><button data-audio="real" aria-label="Play recorded singing">▶ Play</button></figcaption><canvas id="realPlot" aria-label="Mel spectrogram of the recorded singing"></canvas></figure>
+  <figure class="panel"><figcaption class="panel-head"><strong>Original SoulX</strong><button data-audio="native" aria-label="Play the original SoulX output">▶ Play</button></figcaption><canvas id="nativePlot" aria-label="Mel spectrogram of the original SoulX output"></canvas></figure>
+  <figure class="panel"><figcaption class="panel-head"><strong id="modelTitle">Selected model</strong><button data-audio="model" aria-label="Play the selected model output">▶ Play</button></figcaption><canvas id="modelPlot" aria-label="Mel spectrogram of the selected model and guidance setting"></canvas></figure>
+</div>
+<div class="legend">Mel power <span>−80</span><span class="scale"></span><span>0 dB</span><span class="key">┆ Target boundaries</span></div>
+<p id="plot-error" class="note" role="status" hidden></p>
+<div class="player-row">
+  <audio id="player" controls preload="metadata" aria-label="Audio comparison player"></audio><span id="active" aria-live="polite"></span><button data-audio="ref">Play singer reference</button>
+</div>
+<div class="blind">
+  <strong>Blind A/B comparison</strong> <span id="blindPair" class="note"></span><br>
+  <button id="shuffle">Shuffle</button><button id="aa">Play A</button><button id="bb">Play B</button><button id="reveal">Reveal conditions</button> <span id="answer" aria-live="polite"></span>
+</div>
+<section class="metrics" aria-labelledby="metric-heading">
+  <div class="section-head"><h3 id="metric-heading">Phrase measurements</h3><span class="note">Δ is the change from the same model with no label.</span></div>
+  <div class="scroll"><table><thead><tr><th>Measure</th><th>Recorded singing</th><th>Original SoulX</th><th id="metricTitle">Selected model</th><th>Δ</th></tr></thead><tbody id="measurements"></tbody></table></div>
+  <details><summary>Lyrics and Whisper transcript</summary>
+    <dl class="asr"><dt id="source-label" hidden>Original title and target words</dt><dd id="source-text" hidden></dd><dt>Reference lyrics</dt><dd id="lyrics"></dd><dt>Whisper transcript</dt><dd id="transcript"></dd></dl>
+  </details>
+  <details><summary>Measurement notes</summary>
+    <p id="basis"></p>
+    <p>The technique probe scores the target region. The matched-note vibrato measure uses a sustained note measurable at every guidance setting for that model. For add requests, the valid window can differ across models. WavLM compares the full phrase with a reference from another song by the same singer. Changes in lyric error rates are in percentage points. A dash indicates an unavailable measurement.</p>
+    <p>All spectrograms for a phrase share a scale relative to their peak mel power. Each uses 80 mel bands, a 1,024-sample Hann window and a 10 ms hop at 24 kHz.</p>
+  </details>
+</section>
+</section>
+</main>
+<script src="mel/samples.js"></script><script>
 "use strict";
 const el=id=>document.getElementById(id),mode=el("mode"),tech=el("tech"),arm=el("arm"),choice=el("case"),crop=el("crop"),player=el("player");
 const gains=["0","2","4","8"],plots=["realPlot","nativePlot","modelPlot"];
 let gain="2",lastGain="2",row,atlas=null,ab=[],playEnd=Infinity,serial=0;
 const current=(g=gain)=>row.conditions[arm.value+"-"+g];
-const gainLabel=g=>g==="0"?"무지정":(mode.value==="add"?"ON":"OFF")+" ×"+g;
+const gainLabel=g=>g==="0"?"No label":(mode.value==="add"?"ON":"OFF")+" ×"+g;
 const selectedName=()=>arm.selectedOptions[0].text+" · "+gainLabel(gain);
 const span=()=>crop.checked?[Math.max(0,row.start-.35),Math.min(row.duration,row.end+.35)]:[0,row.duration];
 function stop(){serial++;player.pause();player.onloadedmetadata=null;player.removeAttribute("src");player.load();playEnd=Infinity;el("active").textContent=""}
@@ -57,10 +103,10 @@ function sound(kind,g=gain,blindLabel=""){
   const [start,end]=isRef?[0,Infinity]:span(); player.pause();playEnd=end;
   player.onloadedmetadata=()=>{if(id!==serial)return;player.currentTime=start;player.play().catch(()=>{})};
   player.volume=isRef?1:row.volumes[idx]; player.src=isRef?row.ref:row.paths[idx];
-  el("active").textContent=blindLabel||({real:"실제 가창",native:"원본 SoulX",ref:"가수 reference",model:arm.selectedOptions[0].text+" · "+gainLabel(g)})[kind];player.load();
+  el("active").textContent=blindLabel||({real:"Recorded singing",native:"Original SoulX",ref:"Singer reference",model:arm.selectedOptions[0].text+" · "+gainLabel(g)})[kind];player.load();
 }
 player.ontimeupdate=()=>{if(!player.paused&&player.currentTime>=playEnd)player.pause()};
-player.onerror=()=>{if(player.getAttribute("src"))el("active").textContent="음원을 열 수 없어. 샘플 폴더의 WAV 경로를 확인해줘."};
+player.onerror=()=>{if(player.getAttribute("src"))el("active").textContent="Unable to load the audio. Please try again."};
 function draw(canvas,index){
   const w=canvas.clientWidth,h=canvas.clientHeight,ratio=window.devicePixelRatio||1;
   if(!w||!h)return;
@@ -84,12 +130,12 @@ function draw(canvas,index){
 function drawAll(){if(row)[0,1,current().idx].forEach((idx,i)=>draw(el(plots[i]),idx))}
 function table(){
   const base=row.conditions["fm-0"],cur=current(),nulls=current("0");
-  const fields=[["probe",tech.selectedOptions[0].text+" probe · 목표 구간",3]];
-  if(row.tech==="breathiness")fields.push(["hnr","HNR · 목표 구간 (dB)",2]);
-  if(row.tech==="vibrato")fields.push(["vib","4–9 Hz 떨림 · 유효 유성음 (cents RMS)",1],["stable","4–9 Hz 떨림 · 비교용 단일음 (cents RMS)",1]);
-  fields.push(["sv","가수 reference 유사도 · WavLM",3],["pitch","악보 음정 오차 (cents)",1]);
-  if(row.lang==="English")fields.push(["wer","가사 WER (%)",1]);
-  fields.push(["cer","가사 CER (%)",1],["outside","구간 밖 원본과의 스펙트럼 거리 (dB)",2]);
+  const fields=[["probe",tech.selectedOptions[0].text+" probe score in target",3]];
+  if(row.tech==="breathiness")fields.push(["hnr","Harmonics-to-noise ratio in target (dB)",2]);
+  if(row.tech==="vibrato")fields.push(["vib","4–9 Hz pitch modulation, voiced frames (cents RMS)",1],["stable","4–9 Hz pitch modulation, matched note (cents RMS)",1]);
+  fields.push(["sv","Singer similarity (WavLM cosine)",3],["pitch","Pitch error relative to score (cents)",1]);
+  if(row.lang==="English")fields.push(["wer","Lyric word error rate (%)",1]);
+  fields.push(["cer","Lyric character error rate (%)",1],["outside","Spectral distance from SoulX outside target (dB)",2]);
   const tbody=el("measurements");tbody.replaceChildren();
   for(const [k,label,dp] of fields){
     const tr=tbody.insertRow();tr.insertCell().textContent=label;
@@ -98,22 +144,35 @@ function table(){
   }
   el("lyrics").textContent=cur.lyric||"—";el("transcript").textContent=cur.asr||"—";
 }
-function shuffle(){ab=["0",lastGain];if(Math.random()<.5)ab.reverse();el("answer").textContent="";el("blindPair").textContent="무지정 / "+gainLabel(lastGain)}
+function shuffle(){ab=["0",lastGain];if(Math.random()<.5)ab.reverse();el("answer").textContent="";el("blindPair").textContent="No label / "+gainLabel(lastGain)}
 function condition(){
   stop();el("modelTitle").textContent=selectedName();el("metricTitle").textContent=selectedName();
   for(const b of el("gains").children){b.textContent=gainLabel(b.value);b.setAttribute("aria-pressed",String(b.value===gain))}
   table();draw(el("modelPlot"),current().idx);shuffle();hash();
 }
 function hash(){try{history.replaceState(null,"","#"+new URLSearchParams({mode:mode.value,tech:tech.value,id:row.id,arm:arm.value,g:gain}))}catch{}}
+function phraseLabel(sample) {
+  if (sample.lang === "Chinese") {
+    return sample.songEnglish + " · " + sample.start.toFixed(2) + "–" + sample.end.toFixed(2) + " s";
+  }
+  return sample.song + " · " + sample.word;
+}
 function sample(){
   row=samples.find(s=>s.id===choice.value);atlas=null;
-  el("caseTitle").textContent=row.song+" · "+row.word;
-  el("timing").textContent=row.singer+"  ·  "+row.start.toFixed(2)+"–"+row.end.toFixed(2)+"초";
+  el("caseTitle").textContent = row.songEnglish || phraseLabel(row);
+  const isMandarin = row.lang === "Chinese";
+  el("source-label").hidden = !isMandarin;
+  el("source-text").hidden = !isMandarin;
+  el("source-text").lang = isMandarin ? "zh" : "en";
+  el("source-text").textContent = isMandarin ? row.song + " · " + row.word : "";
+  el("lyrics").lang = el("transcript").lang = isMandarin ? "zh" : "en";
+  el("plot-error").hidden = true;
+  el("timing").textContent=row.singer+"  ·  "+row.start.toFixed(2)+"–"+row.end.toFixed(2)+" s";
   el("basis").textContent=row.basis;condition();drawAll();
-  const image=new Image();atlas=image;image.onload=()=>{if(atlas===image)drawAll()};image.onerror=()=>{if(atlas===image)el("basis").textContent+=" · spectrogram을 열 수 없어."};image.src=row.atlas;
+  const image=new Image();atlas=image;image.onload=()=>{if(atlas===image)drawAll()};image.onerror=()=>{if(atlas===image){el("plot-error").textContent="Unable to load this spectrogram.";el("plot-error").hidden=false;}};image.src=row.atlas;
 }
 function list(id){choice.replaceChildren();for(const s of samples.filter(s=>s.mode===mode.value&&s.tech===tech.value)){
-  choice.add(new Option(s.song+" · "+s.word+" · "+s.singer,s.id));if(id&&(id===s.id||id===s.alias))choice.value=s.id;
+  choice.add(new Option(phraseLabel(s)+" · "+s.singer,s.id));if(id&&(id===s.id||id===s.alias))choice.value=s.id;
 }sample()}
 for(const g of gains){const b=document.createElement("button");b.value=g;b.onclick=()=>{gain=g;if(g!=="0")lastGain=g;condition();sound("model")};el("gains").append(b)}
 for(const b of document.querySelectorAll("[data-audio]"))b.onclick=()=>sound(b.dataset.audio);
