@@ -12,3 +12,5 @@ Minjun Kim, Yonsei University. This page accompanies *Adding Local Technique Con
 
 The 12 WAV files are synthesized excerpts from the capstone listening panel. They use scores and singer conditioning from [GTSinger](https://github.com/AaronZ345/GTSinger) and [SoulX-Singer](https://github.com/Soul-AILab/SoulX-Singer). The audio excerpts are shared under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). See the [GTSinger dataset license](https://huggingface.co/datasets/GTSinger/GTSinger/blob/main/dataset_license.md).
 
+
+[Download the poster QR code](./LTC-SVS-QR.png)
