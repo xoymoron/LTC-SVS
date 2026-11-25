@@ -6,7 +6,7 @@ Minjun Kim · Yonsei University
 
 This is the English listening page for *Adding Local Technique Control to a Pretrained Singing Voice Synthesis Model*. Select an add or remove request, a technique, a phrase, and a model. Compare the actual singing, the original SoulX-Singer output and the selected model. The interface includes synchronized mel views, target-region playback, per-phrase measurements, a singer reference and a randomized A/B comparison.
 
-The listening panel contains 36 addition and 36 removal regions, plus one extra vibrato-removal example excluded from the evaluation statistics. Each region includes four guidance settings for each of the five model choices. The displayed technique probe is the original study probe. The separate STARS evaluation uses a different panel and scoring protocol.
+The listening panel contains 36 addition and 36 removal regions, plus one extra vibrato-removal example excluded from the evaluation statistics. Each region includes four guidance settings for each of the five model choices.
 
 ## Audio and attribution
 

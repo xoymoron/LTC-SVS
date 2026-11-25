@@ -82,7 +82,7 @@ details{padding:9px 0}summary{cursor:pointer}.blind{border-top:1px solid var(--l
   </details>
   <details><summary>Measurement notes</summary>
     <p id="basis"></p>
-    <p>The technique probe scores the target region. The matched-note vibrato measure uses a sustained note measurable at every guidance setting for that model. For add requests, the valid window can differ across models. WavLM compares the full phrase with a reference from another song by the same singer. Changes in lyric error rates are in percentage points. A dash indicates an unavailable measurement.</p>
+    <p>The matched-note vibrato measure uses a sustained note measurable at every guidance setting for that model. For add requests, the valid window can differ across models. WavLM compares the full phrase with a reference from another song by the same singer. Changes in lyric error rates are in percentage points. A dash indicates an unavailable measurement.</p>
     <p>All spectrograms for a phrase share a scale relative to their peak mel power. Each uses 80 mel bands, a 1,024-sample Hann window and a 10 ms hop at 24 kHz.</p>
   </details>
 </section>
@@ -130,7 +130,7 @@ function draw(canvas,index){
 function drawAll(){if(row)[0,1,current().idx].forEach((idx,i)=>draw(el(plots[i]),idx))}
 function table(){
   const base=row.conditions["fm-0"],cur=current(),nulls=current("0");
-  const fields=[["probe",tech.selectedOptions[0].text+" probe score in target",3]];
+  const fields=[];
   if(row.tech==="breathiness")fields.push(["hnr","Harmonics-to-noise ratio in target (dB)",2]);
   if(row.tech==="vibrato")fields.push(["vib","4–9 Hz pitch modulation, voiced frames (cents RMS)",1],["stable","4–9 Hz pitch modulation, matched note (cents RMS)",1]);
   fields.push(["sv","Singer similarity (WavLM cosine)",3],["pitch","Pitch error relative to score (cents)",1]);
